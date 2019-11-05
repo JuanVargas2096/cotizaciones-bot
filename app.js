@@ -75,12 +75,7 @@ bot.onText(/\/dolarbot/, (msg, match) => {
 });
 
 
-axios.get('/cotizaciones').then((response) => {
-    console.log(response);
-    response.send('ok');
-}).catch((err) => {
-    console.log(err);
-});
+
 
 // Listen for any kind of message. There are different kinds of
 // messages.
