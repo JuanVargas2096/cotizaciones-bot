@@ -1,6 +1,10 @@
 const TelegramBot = require('node-telegram-bot-api');
-var port = process.env.PORT || 8443;
-var host = process.env.HOST || '0.0.0.0';
+var port = 8443 || process.env.PORT;
+var host = '0.0.0.0' || process.env.HOST;
+const express = require('express');
+const app = express();
+
+
 
 const axios = require('axios');
 // replace the value below with the Telegram token you receive from @BotFather
@@ -15,7 +19,11 @@ const options = {
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, options);
 
-
+app.get('/', (req, res) => {
+    res.json({
+        ok: true
+    });
+});
 
 // Matches "/dolarbot [whatever]"
 bot.onText(/\/dolarbot/, (msg, match) => {
@@ -85,3 +93,7 @@ bot.onText(/\/dolarbot/, (msg, match) => {
 
 // Listen for any kind of message. There are different kinds of
 // messages.
+
+app.listen(port, () => {
+    console.log('Escuchando en el puerto: ', port);
+});
