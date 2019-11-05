@@ -1,12 +1,18 @@
 const TelegramBot = require('node-telegram-bot-api');
-
+var port = process.env.PORT || 8443;
+var host = process.env.HOST;
 
 const axios = require('axios');
 // replace the value below with the Telegram token you receive from @BotFather
 const token = '985829962:AAGVNPbHf_YEHXXoJ61bE1jpJHXVmvS3sA8';
-
+const options = {
+    webhook: {
+        port: port,
+        host: host
+    }
+};
 // Create a bot that uses 'polling' to fetch new updates
-const bot = new TelegramBot(token, { polling: true });
+const bot = new TelegramBot(token, { polling: true }, options);
 
 
 
@@ -60,10 +66,10 @@ bot.onText(/\/dolarbot/, (msg, match) => {
 
             //var fechasSeparadas = fechaUpdateDolar.split('T');
 
-            var respuesta = `***Cambios Chaco***\n\n💸Dolar\nCompra: ${dolarCompra} Gs.| Venta: ${dolarVenta} Gs.\n`
-            respuesta = respuesta + `💶Euro\nCompra: ${euroCompra} Gs. | Venta: ${euroVenta} Gs.\n\n`;
-            respuesta = respuesta + `💵Peso Argentino\nCompra: ${pesoArgCompra} Gs. | Venta: ${pesoArgVenta} Gs.\n\n`;
-            respuesta = respuesta + `💵Real\nCompra: ${realCompra} Gs. | Venta: ${realVenta} Gs.`;
+            var respuesta = `Cambios Chaco`.bold() + `\n\n💸Dolar\nCompra: ${dolarCompra} Gs.| Venta: ${dolarVenta} Gs.\n\n`
+            respuesta = respuesta + `💶Euro\nCompra:`.bold() + ` ${euroCompra} Gs. | Venta: ${euroVenta} Gs.\n\n`;
+            respuesta = respuesta + `💵Peso Argentino`.bold() + `\nCompra: ${pesoArgCompra} Gs. | Venta: ${pesoArgVenta} Gs.\n\n`;
+            respuesta = respuesta + `💵Real`.bold() + `\nCompra: ${realCompra} Gs. | Venta: ${realVenta} Gs.`;
             bot.sendMessage(chatId, respuesta);
             // console.log(response.data.explanation);
         })
