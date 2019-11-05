@@ -72,7 +72,6 @@ bot.onText(/\/dolarbot/, (msg, match) => {
             respuesta = respuesta + `💵Peso Argentino\nCompra: ${pesoArgCompra} Gs. | Venta: ${pesoArgVenta} Gs.\n\n`;
             respuesta = respuesta + `💵Real\nCompra: ${realCompra} Gs. | Venta: ${realVenta} Gs.`;
             bot.sendMessage(chatId, respuesta);
-            // console.log(response.data.explanation);
         })
         .catch(error => {
             console.log('Ocurrio un error');
