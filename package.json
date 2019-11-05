@@ -1,0 +1,24 @@
+{
+    "name": "cotizacionesbot",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@gitlab.com/juanra.vargas/cotizacionesbot.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://gitlab.com/juanra.vargas/cotizacionesbot/issues"
+    },
+    "homepage": "https://gitlab.com/juanra.vargas/cotizacionesbot#readme",
+    "dependencies": {
+        "axios": "^0.19.0",
+        "node-telegram-bot-api": "^0.40.0"
+    }
+}
