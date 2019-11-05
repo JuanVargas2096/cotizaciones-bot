@@ -6,11 +6,11 @@ const axios = require('axios');
 // replace the value below with the Telegram token you receive from @BotFather
 const token = '985829962:AAGVNPbHf_YEHXXoJ61bE1jpJHXVmvS3sA8';
 const options = {
-    polling: true,
     webhook: {
         port: port,
         host: host
-    }
+    },
+    polling: true,
 };
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, options);
