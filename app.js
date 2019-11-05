@@ -1,6 +1,6 @@
 const TelegramBot = require('node-telegram-bot-api');
 var port = process.env.PORT || 8443;
-var host = process.env.HOST;
+var host = process.env.HOST || '0.0.0.0';
 
 const axios = require('axios');
 // replace the value below with the Telegram token you receive from @BotFather
@@ -8,7 +8,7 @@ const token = '985829962:AAGVNPbHf_YEHXXoJ61bE1jpJHXVmvS3sA8';
 const options = {
     webhook: {
         port: port,
-        host: host
+        host: host,
     },
     polling: true,
 };
