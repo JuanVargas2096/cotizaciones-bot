@@ -84,6 +84,7 @@ bot.onText(/\/dolarbot/, (msg, match) => {
         .catch(error => {
             console.log('Ocurrio un error');
             console.log(error);
+            bot.sendMessage(chatId, 'Ocurrio un error. Favor intente de nuevo mas tarde.');
         });
 
 });
