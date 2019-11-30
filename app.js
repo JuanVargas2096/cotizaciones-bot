@@ -4,7 +4,7 @@ var host = '0.0.0.0' || process.env.HOST;
 const express = require('express');
 const app = express();
 const emoji = require('node-emoji');
-const str = require('node-strings');
+
 
 
 const axios = require('axios');
