@@ -3,18 +3,23 @@ var port = 8443 || process.env.PORT;
 var host = '0.0.0.0' || process.env.HOST;
 const express = require('express');
 const app = express();
-
+const emoji = require('node-emoji');
+const str = require('node-strings');
 
 
 const axios = require('axios');
 // replace the value below with the Telegram token you receive from @BotFather
-const token = '985829962:AAGVNPbHf_YEHXXoJ61bE1jpJHXVmvS3sA8';
+const token = '985829962:AAG6MVMw7_uHTty82XEzL6tUgZ9ho0JOWo4';
 const options = {
     webhook: {
         port: port,
         host: host,
     },
     polling: true,
+};
+
+const opts = {
+    parse_mode: 'Markdown',
 };
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, options);
@@ -30,7 +35,7 @@ bot.onText(/\/dolarbot/, (msg, match) => {
     // 'msg' is the received Message from Telegram
     // 'match' is the result of executing the regexp above on the text content
     // of the message
-
+    console.log('Se recibio una consulta a /dolarbot');
     const chatId = msg.chat.id;
 
     axios.get('http://www.cambioschaco.com.py/api/branch_office/1/exchange')
@@ -39,7 +44,14 @@ bot.onText(/\/dolarbot/, (msg, match) => {
             var euro;
             var peso_arg;
             var real;
+            var fechaHora = response.data.updateTs;
+            console.log(fechaHora);
 
+
+            var fechaFormateada = new Date(fechaHora);
+            console.log(fechaFormateada.toString());
+            var fechaHoraToSend = fechaFormateada.toString().split("GMT")[0].trim();
+            console.log(fechaHoraToSend);
             response.data.items.forEach(element => {
                 if (element.isoCode === 'USD') {
                     dolar = element;
@@ -71,20 +83,17 @@ bot.onText(/\/dolarbot/, (msg, match) => {
 
             console.log('Dolar compra', dolarCompra);
             console.log('Dolar venta', dolarVenta);
-            //console.log('Fecha de actualizacion', fechaUpdateDolar);
 
-            //var fechasSeparadas = fechaUpdateDolar.split('T');
-
-            var respuesta = `Cambios Chaco\n\n💸Dolar\nCompra: ${dolarCompra} Gs.| Venta: ${dolarVenta} Gs.\n\n`
-            respuesta = respuesta + `💶Euro\nCompra:${euroCompra} Gs. | Venta: ${euroVenta} Gs.\n\n`;
-            respuesta = respuesta + `💵Peso Argentino\nCompra: ${pesoArgCompra} Gs. | Venta: ${pesoArgVenta} Gs.\n\n`;
-            respuesta = respuesta + `💵Real\nCompra: ${realCompra} Gs. | Venta: ${realVenta} Gs.`;
-            bot.sendMessage(chatId, respuesta);
+            var respuesta = `*CAMBIOS CHACO*\n\n${emoji.get('dollar')}${emoji.get('dollar')}*Dolar*\n*Compra*: ${dolarCompra.toLocaleString().replace(/,/g, '.')} Gs.| *Venta*: ${dolarVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n`;
+            respuesta = respuesta + `${emoji.get('euro')}${emoji.get('euro')}*Euro*\n*Compra*: ${euroCompra.toLocaleString().replace(/,/g, '.')} Gs. | *Venta*: ${euroVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n`;
+            respuesta = respuesta + `${emoji.get('money_with_wings')}${emoji.get('money_with_wings')}*Peso Argentino*\n*Compra*: ${pesoArgCompra.toLocaleString().replace(/,/g, '.')} Gs. | *Venta*: ${pesoArgVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n`;
+            respuesta = respuesta + `${emoji.get('yen')}${emoji.get('yen')}*Real*\n*Compra*: ${realCompra.toLocaleString().replace(/,/g, '.')} Gs. | *Venta*: ${realVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n${emoji.get('date')}${emoji.get('hourglass_flowing_sand')}\n ${fechaHoraToSend}`;
+            bot.sendMessage(chatId, respuesta, opts);
         })
         .catch(error => {
             console.log('Ocurrio un error');
             console.log(error);
-            bot.sendMessage(chatId, 'Ocurrio un error. Favor intente de nuevo mas tarde.');
+            bot.sendMessage(chatId, 'Ocurrio un error. Favor intente de nuevo mas tarde.', opts);
         });
 
 });
