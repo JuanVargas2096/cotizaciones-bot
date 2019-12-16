@@ -49,8 +49,10 @@ bot.onText(/\/dolarbot/, (msg, match) => {
 
 
             var fechaFormateada = new Date(fechaHora);
-            console.log(fechaFormateada.toString());
-            var fechaHoraToSend = fechaFormateada.toString().split("GMT")[0].trim();
+            // console.log(fechaFormateada.toString());
+            // var fechaHoraToSend = fechaFormateada.toString().split("GMT")[0].trim();
+            // console.log(fechaHoraToSend);
+            var fechaHoraToSend = formatDate(fechaFormateada);
             console.log(fechaHoraToSend);
             response.data.items.forEach(element => {
                 if (element.isoCode === 'USD') {
@@ -84,10 +86,10 @@ bot.onText(/\/dolarbot/, (msg, match) => {
             console.log('Dolar compra', dolarCompra);
             console.log('Dolar venta', dolarVenta);
 
-            var respuesta = `*CAMBIOS CHACO*\n\n${emoji.get('dollar')}${emoji.get('dollar')}*Dolar*\n*Compra*: ${dolarCompra.toLocaleString().replace(/,/g, '.')} Gs.| *Venta*: ${dolarVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n`;
-            respuesta = respuesta + `${emoji.get('euro')}${emoji.get('euro')}*Euro*\n*Compra*: ${euroCompra.toLocaleString().replace(/,/g, '.')} Gs. | *Venta*: ${euroVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n`;
-            respuesta = respuesta + `${emoji.get('money_with_wings')}${emoji.get('money_with_wings')}*Peso Argentino*\n*Compra*: ${pesoArgCompra.toLocaleString().replace(/,/g, '.')} Gs. | *Venta*: ${pesoArgVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n`;
-            respuesta = respuesta + `${emoji.get('yen')}${emoji.get('yen')}*Real*\n*Compra*: ${realCompra.toLocaleString().replace(/,/g, '.')} Gs. | *Venta*: ${realVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n${emoji.get('date')}${emoji.get('hourglass_flowing_sand')}\n ${fechaHoraToSend}`;
+            var respuesta = `*CAMBIOS CHACO*\n\n${emoji.get('dollar')}${emoji.get('dollar')} *Dolar*\n*Compra*: ${dolarCompra.toLocaleString().replace(/,/g, '.')} Gs.| *Venta*: ${dolarVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n`;
+            respuesta = respuesta + `${emoji.get('euro')}${emoji.get('euro')} *Euro*\n*Compra*: ${euroCompra.toLocaleString().replace(/,/g, '.')} Gs. | *Venta*: ${euroVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n`;
+            respuesta = respuesta + `${emoji.get('money_with_wings')}${emoji.get('money_with_wings')} *Peso Argentino*\n*Compra*: ${pesoArgCompra.toLocaleString().replace(/,/g, '.')} Gs. | *Venta*: ${pesoArgVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n`;
+            respuesta = respuesta + `${emoji.get('yen')}${emoji.get('yen')} *Real*\n*Compra*: ${realCompra.toLocaleString().replace(/,/g, '.')} Gs. | *Venta*: ${realVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n${emoji.get('date')}${emoji.get('hourglass_flowing_sand')}\n ${fechaHoraToSend}`;
             bot.sendMessage(chatId, respuesta, opts);
         })
         .catch(error => {
@@ -107,3 +109,35 @@ bot.onText(/\/dolarbot/, (msg, match) => {
 app.listen(port, () => {
     console.log('Escuchando en el puerto: ', port);
 });
+
+
+
+function formatDate(date) {
+    var monthNames = [
+        "Enero", "Febrero", "Marzo",
+        "Abril", "Mayo", "Junio", "Julio",
+        "Agosto", "Septiembre", "Octubre",
+        "Noviembre", "Diciembre"
+    ];
+
+    var numbers = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09"];
+    console.log(numbers[0]);
+    var day = date.getDate();
+    var monthIndex = date.getMonth();
+    var year = date.getFullYear();
+    var hour = date.getHours();
+    if (hour < 10) {
+        hour = numbers[hour];
+    }
+    console.log(hour);
+    var minutes = date.getMinutes();
+    if (minutes < 10) {
+        minutes = numbers[minutes];
+    }
+    var seconds = date.getSeconds();
+    if (seconds < 10) {
+        seconds = numbers[seconds];
+    }
+    console.log(seconds);
+    return hour + ":" + minutes + ":" + seconds + " - " + day + '/' + monthNames[monthIndex] + '/' + year;
+};
