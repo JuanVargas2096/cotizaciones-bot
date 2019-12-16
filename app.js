@@ -139,5 +139,5 @@ function formatDate(date) {
         seconds = numbers[seconds];
     }
     console.log(seconds);
-    return hour + ":" + minutes + ":" + seconds + " - " + day + '/' + monthNames[monthIndex] + '/' + year;
+    return day + '/' + monthNames[monthIndex] + '/' + year + " - " + hour + ":" + minutes + ":" + seconds;
 };
