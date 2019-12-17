@@ -30,6 +30,13 @@ app.get('/', (req, res) => {
     });
 });
 
+bot.onText(/\/start/, (msg, match) => {
+    console.log('Se recibio una consulta a /start');
+    const chatId = msg.chat.id;
+    var respuesta = "To get the currency values please tap */dolarbot*.\n";
+    bot.sendMessage(chatId, respuesta, opts);
+});
+
 // Matches "/dolarbot [whatever]"
 bot.onText(/\/dolarbot/, (msg, match) => {
     // 'msg' is the received Message from Telegram
