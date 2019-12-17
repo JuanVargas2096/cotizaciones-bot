@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 bot.onText(/\/start/, (msg, match) => {
     console.log('Se recibio una consulta a /start');
     const chatId = msg.chat.id;
-    var respuesta = "To get the currency values please tap: \n\n\n*/dolarbot*\n";
+    var respuesta = "To get the currency values please tap: \n\n*/dolarbot*\n";
     bot.sendMessage(chatId, respuesta, opts);
 });
 
