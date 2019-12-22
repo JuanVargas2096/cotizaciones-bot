@@ -1,8 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
-var port = 8443 || process.env.PORT;
 var host = '0.0.0.0' || process.env.HOST;
-const express = require('express');
-const app = express();
 const emoji = require('node-emoji');
 
 
@@ -11,10 +8,6 @@ const axios = require('axios');
 // replace the value below with the Telegram token you receive from @BotFather
 const token = '985829962:AAG6MVMw7_uHTty82XEzL6tUgZ9ho0JOWo4';
 const options = {
-    webhook: {
-        port: port,
-        host: host,
-    },
     polling: true,
 };
 
@@ -24,11 +17,7 @@ const opts = {
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, options);
 
-app.get('/', (req, res) => {
-    res.json({
-        ok: true
-    });
-});
+
 
 bot.onText(/\/start/, (msg, match) => {
     console.log('Se recibio una consulta a /start');
@@ -38,85 +27,71 @@ bot.onText(/\/start/, (msg, match) => {
 });
 
 // Matches "/dolarbot [whatever]"
-bot.onText(/\/dolarbot/, (msg, match) => {
+bot.onText(/\/dolarbot/, (msg) => {
     // 'msg' is the received Message from Telegram
-    // 'match' is the result of executing the regexp above on the text content
-    // of the message
+
     console.log('Se recibio una consulta a /dolarbot');
     const chatId = msg.chat.id;
 
-    axios.get('http://www.cambioschaco.com.py/api/branch_office/1/exchange')
-        .then((response) => {
-            var dolar;
-            var euro;
-            var peso_arg;
-            var real;
-            var fechaHora = response.data.updateTs;
-            console.log(fechaHora);
 
 
-            var fechaFormateada = new Date(fechaHora);
-            // console.log(fechaFormateada.toString());
-            // var fechaHoraToSend = fechaFormateada.toString().split("GMT")[0].trim();
-            // console.log(fechaHoraToSend);
-            var fechaHoraToSend = formatDate(fechaFormateada);
-            console.log(fechaHoraToSend);
-            response.data.items.forEach(element => {
-                if (element.isoCode === 'USD') {
-                    dolar = element;
+    try {
 
-                }
-                if (element.isoCode === 'EUR') {
-                    euro = element;
-                }
+        var respuesta = obtenerCotizaciones().then((cotizaciones) => {
+            console.log('cotizaciones: ', cotizaciones);
+            console.log('Seria lindo que funcione vd?');
+            if (!cotizaciones.ok) {
+                bot.sendMessage(chatId, 'Ocurrio un error indeterminado. Favor intente nuevamente mas tarde.', opts)
+            }
+            var dolar = cotizaciones.data.dolar;
+            var euro = cotizaciones.data.euro;
+            var peso_arg = cotizaciones.data.pesoArg;
+            var real = cotizaciones.data.real;
+            var fechaHora = cotizaciones.data.fecha;
+            console.log('Fecha de actualizacion', fechaHora);
 
-                if (element.isoCode === 'ARS') {
-                    peso_arg = element;
-                }
-                if (element.isoCode === 'BRL') {
-                    real = element;
-                }
-            });
+            console.log('peso argentino', peso_arg);
 
-            var pesoArgCompra = peso_arg.purchasePrice;
-            var pesoArgVenta = peso_arg.salePrice;
 
-            var euroCompra = euro.purchasePrice;
-            var euroVenta = euro.salePrice;
+            var pesoArgCompra = peso_arg.pesoArgCompra;
+            var pesoArgVenta = peso_arg.pesoArgVenta;
 
-            var dolarCompra = dolar.purchasePrice;
-            var dolarVenta = dolar.salePrice;
+            var euroCompra = euro.euroCompra;
+            var euroVenta = euro.euroVenta;
 
-            var realCompra = real.purchasePrice;
-            var realVenta = real.salePrice;
+            var dolarCompra = dolar.dolarCompra;
+            var dolarVenta = dolar.dolarVenta;
 
-            console.log('Dolar compra', dolarCompra);
-            console.log('Dolar venta', dolarVenta);
+            var realCompra = real.realCompra;
+            var realVenta = real.realVenta;
+
+            console.log('Peso Arg compra: ', pesoArgCompra);
+
+            console.log('Peso Arg venta: ', pesoArgVenta);
+
+
 
             var respuesta = `*CAMBIOS CHACO*\n\n${emoji.get('dollar')}${emoji.get('dollar')} *Dolar*\n*Compra*: ${dolarCompra.toLocaleString().replace(/,/g, '.')} Gs.| *Venta*: ${dolarVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n`;
             respuesta = respuesta + `${emoji.get('euro')}${emoji.get('euro')} *Euro*\n*Compra*: ${euroCompra.toLocaleString().replace(/,/g, '.')} Gs. | *Venta*: ${euroVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n`;
             respuesta = respuesta + `${emoji.get('money_with_wings')}${emoji.get('money_with_wings')} *Peso Argentino*\n*Compra*: ${pesoArgCompra.toLocaleString().replace(/,/g, '.')} Gs. | *Venta*: ${pesoArgVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n`;
-            respuesta = respuesta + `${emoji.get('yen')}${emoji.get('yen')} *Real*\n*Compra*: ${realCompra.toLocaleString().replace(/,/g, '.')} Gs. | *Venta*: ${realVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n${emoji.get('date')}${emoji.get('hourglass_flowing_sand')}\n ${fechaHoraToSend}`;
-            bot.sendMessage(chatId, respuesta, opts);
-        })
-        .catch(error => {
-            console.log('Ocurrio un error');
-            console.log(error);
-            bot.sendMessage(chatId, 'Ocurrio un error. Favor intente de nuevo mas tarde.', opts);
+            respuesta = respuesta + `${emoji.get('yen')}${emoji.get('yen')} *Real*\n*Compra*: ${realCompra.toLocaleString().replace(/,/g, '.')} Gs. | *Venta*: ${realVenta.toLocaleString().replace(/,/g, '.')} Gs.\n\n${emoji.get('date')}${emoji.get('hourglass_flowing_sand')}\n ${fechaHora}`;
+            bot.sendMessage(chatId, respuesta, opts)
+        }, (err) => {
+            console.log(err);
+            bot.sendMessage(chatId, 'Ocurrio un error indeterminado. Favor intente nuevamente mas tarde.', opts)
         });
 
+
+
+
+
+    } catch (error) {
+        console.log(error);
+
+    }
+
+
 });
-
-
-
-
-// Listen for any kind of message. There are different kinds of
-// messages.
-
-app.listen(port, () => {
-    console.log('Escuchando en el puerto: ', port);
-});
-
 
 
 function formatDate(date) {
@@ -126,25 +101,107 @@ function formatDate(date) {
         "Agosto", "Septiembre", "Octubre",
         "Noviembre", "Diciembre"
     ];
-
-    var numbers = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09"];
-    console.log(numbers[0]);
     var day = date.getDate();
     var monthIndex = date.getMonth();
     var year = date.getFullYear();
-    var hour = date.getHours();
-    if (hour < 10) {
-        hour = numbers[hour];
-    }
-    console.log(hour);
-    var minutes = date.getMinutes();
-    if (minutes < 10) {
-        minutes = numbers[minutes];
-    }
-    var seconds = date.getSeconds();
-    if (seconds < 10) {
-        seconds = numbers[seconds];
-    }
-    console.log(seconds);
-    return day + '/' + monthNames[monthIndex] + '/' + year + " - " + hour + ":" + minutes + ":" + seconds;
+    return day + '/' + monthNames[monthIndex] + '/' + year;
 };
+
+let getCotizaciones = () => {
+    return new Promise((resolve, reject) => {
+        axios.get('http://www.cambioschaco.com.py/api/branch_office/1/exchange')
+            .then((response) => {
+                var dolar;
+                var euro;
+                var peso_arg;
+                var real;
+                var fechaHora = response.data.updateTs;
+                console.log(fechaHora);
+
+
+                var fechaFormateada = new Date(fechaHora);
+
+                var fechaHoraToSend = formatDate(fechaFormateada);
+                console.log(fechaHoraToSend);
+                response.data.items.forEach(element => {
+                    if (element.isoCode === 'USD') {
+                        dolar = element;
+
+                    }
+                    if (element.isoCode === 'EUR') {
+                        euro = element;
+                    }
+
+                    if (element.isoCode === 'ARS') {
+                        peso_arg = element;
+                    }
+                    if (element.isoCode === 'BRL') {
+                        real = element;
+                    }
+                });
+
+                var pesoArgCompra = peso_arg.purchasePrice;
+                var pesoArgVenta = peso_arg.salePrice;
+
+                var euroCompra = euro.purchasePrice;
+                var euroVenta = euro.salePrice;
+
+                var dolarCompra = dolar.purchasePrice;
+                var dolarVenta = dolar.salePrice;
+
+                var realCompra = real.purchasePrice;
+                var realVenta = real.salePrice;
+
+                console.log('Dolar compra', dolarCompra);
+                console.log('Dolar venta', dolarVenta);
+
+                resolve({
+                    ok: true,
+                    message: 'Exito',
+                    data: {
+                        dolar: {
+                            dolarCompra: dolarCompra,
+                            dolarVenta: dolarVenta
+                        },
+                        euro: {
+                            euroCompra: euroCompra,
+                            euroVenta: euroVenta
+                        },
+                        pesoArg: {
+                            pesoArgCompra: pesoArgCompra,
+                            pesoArgVenta: pesoArgVenta
+                        },
+                        real: {
+                            realCompra: realCompra,
+                            realVenta: realVenta
+                        },
+                        fecha: fechaHoraToSend
+
+                    }
+                });
+
+            }).catch(error => {
+                console.log('Ocurrio un error');
+                console.log(error);
+
+                reject({
+                    ok: false,
+                    message: 'Ocurrio un error',
+                    data: {}
+                });
+
+            });
+    });
+
+
+}
+
+
+
+
+let obtenerCotizaciones = async() => {
+    let cotizacion = await getCotizaciones();
+    console.log('cotizacion', cotizacion);
+
+    return cotizacion;
+}
