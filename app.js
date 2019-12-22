@@ -22,18 +22,16 @@ const bot = new TelegramBot(token, options);
 bot.onText(/\/start/, (msg, match) => {
     console.log('Se recibio una consulta a /start');
     const chatId = msg.chat.id;
-    var respuesta = "To get the currency values please tap: \n\n*/dolarbot*\n";
+    var respuesta = "Para obtener los montos presione: \n\n*/dolarbot*\n";
     bot.sendMessage(chatId, respuesta, opts);
 });
 
-// Matches "/dolarbot [whatever]"
+// Matches "/dolarbot"
 bot.onText(/\/dolarbot/, (msg) => {
     // 'msg' is the received Message from Telegram
 
     console.log('Se recibio una consulta a /dolarbot');
     const chatId = msg.chat.id;
-
-
 
     try {
 
@@ -78,16 +76,12 @@ bot.onText(/\/dolarbot/, (msg) => {
             bot.sendMessage(chatId, respuesta, opts)
         }, (err) => {
             console.log(err);
-            bot.sendMessage(chatId, 'Ocurrio un error indeterminado. Favor intente nuevamente mas tarde.', opts)
+            bot.sendMessage(chatId, 'Ocurrio un error indeterminado. Favor intente nuevamente mas tarde.', opts);
         });
-
-
-
-
 
     } catch (error) {
         console.log(error);
-
+        bot.sendMessage(chatId, 'Ocurrio un error indeterminado. Favor intente nuevamente mas tarde.', opts);
     }
 
 
@@ -197,11 +191,7 @@ let getCotizaciones = () => {
 }
 
 
-
-
 let obtenerCotizaciones = async() => {
     let cotizacion = await getCotizaciones();
-    console.log('cotizacion', cotizacion);
-
     return cotizacion;
 }
