@@ -1,9 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
-var host = '0.0.0.0' || process.env.HOST;
 const emoji = require('node-emoji');
-
-
-
 const axios = require('axios');
 // replace the value below with the Telegram token you receive from @BotFather
 const token = '985829962:AAG6MVMw7_uHTty82XEzL6tUgZ9ho0JOWo4';
